@@ -25,9 +25,21 @@ function run_test() {
     printf "%s\n" "$CMD_OUTPUT"
 }
 
-PHILIP_BASE="$( cd "$( dirname "${BASH_SOURCE[1]}" )" >/dev/null 2>&1 && pwd )"
-cd $PHILIP_BASE
+# Find config file
+if [ -z "$1" ]
+then
+    echo "$HELP_USAGE"
+    exit
+fi
 
+case "$1" in
+  /*) STATIC_TEST_CONF_PATH=$1 ;;
+  -*) echo "$HELP_USAGE"
+  exit;;
+  *) STATIC_TEST_CONF_PATH="${PWD}/${1}" ;;
+esac
+
+# Get flags
 while getopts "hrcp" opt; do
   case $opt in
     h) echo "$HELP_USAGE"
@@ -40,6 +52,11 @@ while getopts "hrcp" opt; do
   esac
 done
 
+source $STATIC_TEST_CONF_PATH
+CUR_PRJ_ROOT="`cd "${STATIC_TEST_CONF_PATH%/*}/${PRJ_ROOT}";pwd`"
+
+cd $CUR_PRJ_ROOT
+
 if [ -n "$REBASE" ]; then
     run_test "REBASE" "git rebase master"
 else
@@ -48,28 +65,28 @@ fi
 
 if [[ $LANG == "c,py" ]] || [[ $LANG == "py" ]]; then
   CMD_OUTPUT=$(flake8)
-  run_test "FLAKE8" "flake8"
+  run_test "FLAKE8" "flake8 ${FLAKE8_ARGS}"
 fi
 
-run_test "CODESPELL" "codespell FW/Src/ FW/MMM/ FW/Inc IF/philip_pal/philip_pal QUALIFICATION/ --skip=\"*.csv,*.pyc,*stm32f1xx*\""
+run_test "CODESPELL" "codespell ${CODESPELL_ARGS}"
 
 if [[ $LANG == "c,py" ]] || [[ $LANG == "c" ]]; then
-  cd FW
-
+  cd "${CUR_PRJ_ROOT}/${FW_DIR}"
+  run_test "CPPCHECK" "cppcheck ${CPPCHECK_ARGS}"
   run_test "DOC_CHECK" "make doc"
 
   make clean
   run_test "DEFAULT_MAKE" "make"
   make clean
 
-  BOARD=BLUEPILL make clean
-  run_test "BLUEPILL_MAKE" "BOARD=BLUEPILL make"
-  BOARD=BLUEPILL make clean
+  for i in "${BOARDS[@]}"
+  do
+      BOARD=i make clean
+      run_test "${i}_MAKE" "BOARD=${i} make"
+      BOARD=i make clean
+  done
 
-  BOARD=NUCLEOF103RB make clean
-  run_test "NUCLEOF103RB_MAKE" "BOARD=NUCLEOF103RB make"
-  BOARD=NUCLEOF103RB make clean
-  cd ..
+  cd "${CUR_PRJ_ROOT}"
 fi
 
 exit $FAIL_OCCURED
