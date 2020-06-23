@@ -559,11 +559,11 @@ class PhilipExtIf(PhilipBaseIf):
         if chunk_size:
             self._get_trace_events(trace, index, chunk_size, to_ns)
 
-        sorted_events = sorted(trace, key=lambda x: x['time'])
+        response['data'] = sorted(trace, key=lambda x: x['time'])
         any_diff = 0
         ev_diff = {"DEBUG0": 0, "DEBUG1": 0, "DEBUG2": 0, "DUT_IC": 0}
 
-        for event in sorted_events:
+        for event in response['data'] :
             event["diff"] = 0
             event["source_diff"] = 0
             if any_diff != 0:
@@ -573,7 +573,6 @@ class PhilipExtIf(PhilipBaseIf):
             ev_diff[event['source']] = event["time"]
             any_diff = event["time"]
 
-        response['data'] = sorted(trace, key=lambda x: x['time'])
         return response
 
     def _get_trace_events(self, trace, index, chunk_size, to_ns):

@@ -13,7 +13,7 @@
  * @author			Yegor Yefremov
  * @date			21.03.2019
  * @brief			Main function that initializes and controls super loop and
- * 					polling based functions.
+ *                  polling based functions.
  ******************************************************************************
  */
 
@@ -44,6 +44,7 @@
 /* Includes *******************************************************************/
 #include <errno.h>
 #include <stdint.h>
+#include <stdatomic.h>
 
 #include "stm32f1xx_hal.h"
 
@@ -74,79 +75,84 @@ static void _super_loop();
 /*           Functions                                                        */
 /******************************************************************************/
 /** @brief  The application entry point. */
-int main(void) {
-	map_t reg = { 0 };
+int main(void)
+{
+     map_t reg = { 0 };
 
-	/* Reset of all peripherals, Initializes the Flash interface and Systick. */
-	HAL_Init();
+    /* Reset of all peripherals, Initializes the Flash interface and Systick. */
+    HAL_Init();
 
-	/* Configure the system clock */
-	init_clock();
+    /* Configure the system clock */
+    init_clock();
 
-	init_defaults_map_t(&reg);
-	/* Initialize all configured peripherals */
-	DIS_INT;
-	init_periphs();
-	init_gpio(&reg);
-	init_app_reg(&reg);
-	init_trace(&reg);
-	init_dut_pwm_dac(&reg);
-	init_dut_uart(&reg);
-	init_if_uart();
-	init_dut_i2c(&reg);
-	init_dut_spi(&reg);
-	init_rtc(&reg);
-	init_dut_adc(&reg);
-	init_dut_ic(&reg);
-	init_sys(&reg);
-	init_led_flash();
-	init_wdt();
-	EN_INT;
-	while (1) {
-		_super_loop();
-		poll_dut_uart();
-		poll_if_uart();
-	}
+    init_defaults_map_t(&reg);
+    /* Initialize all configured peripherals */
+    DIS_INT;
+    init_periphs();
+    init_gpio(&reg);
+    init_app_reg(&reg);
+    init_trace(&reg);
+    init_dut_pwm_dac(&reg);
+    init_dut_uart(&reg);
+    init_if_uart();
+    init_dut_i2c(&reg);
+    init_dut_spi(&reg);
+    init_rtc(&reg);
+    init_dut_adc(&reg);
+    init_dut_ic(&reg);
+    init_sys(&reg);
+    init_led_flash();
+    init_wdt();
+    EN_INT;
+    while (1) {
+        _super_loop();
+        poll_dut_uart();
+        poll_if_uart();
+    }
 }
 
 /******************************************************************************/
-static void _super_loop() {
-	void (* const fxn_to_ex_per_tick[])(void) = {update_tick,
-		update_debug_inputs,
-		update_dut_spi_inputs,
-		update_dut_i2c_inputs,
-		update_dut_uart_inputs,
-		update_dut_pwm_inputs,
-		update_dut_dac_inputs,
-		update_dut_ic_inputs,
-		update_rtc };
-	void (* const fxn_to_ex[])(void) = {poll_dut_adc,
-										poll_dut_ic};
-	static uint32_t fxn_index_tick = 0;
-	static uint32_t fxn_index = 0;
-	if (_is_tick()) {
-		flash_fw_version();
-		reset_wdt();
-		(fxn_to_ex_per_tick[fxn_index_tick++])();
-		if (fxn_index_tick
-				>= sizeof(fxn_to_ex_per_tick) / sizeof(fxn_to_ex_per_tick[0])) {
-			fxn_index_tick = 0;
-		}
-	} else {
-		(fxn_to_ex[fxn_index++])();
-		if (fxn_index >= sizeof(fxn_to_ex) / sizeof(fxn_to_ex[0])) {
-			fxn_index = 0;
-		}
-	}
+static void _super_loop()
+{
+    void(*const fxn_to_ex_per_tick[]) (void) = { update_tick,
+                                                 update_debug_inputs,
+                                                 update_dut_spi_inputs,
+                                                 update_dut_i2c_inputs,
+                                                 update_dut_uart_inputs,
+                                                 update_dut_pwm_inputs,
+                                                 update_dut_dac_inputs,
+                                                 update_dut_ic_inputs,
+                                                 update_rtc };
+    void(*const fxn_to_ex[]) (void) = { poll_dut_adc,
+                                        poll_dut_ic };
+    static uint32_t fxn_index_tick = 0;
+    static uint32_t fxn_index = 0;
+    if (_is_tick()) {
+        flash_fw_version();
+        reset_wdt();
+        (fxn_to_ex_per_tick[fxn_index_tick++])();
+        if (fxn_index_tick
+            >= sizeof(fxn_to_ex_per_tick) / sizeof(fxn_to_ex_per_tick[0])) {
+            fxn_index_tick = 0;
+        }
+    }
+    else {
+        (fxn_to_ex[fxn_index++])();
+        if (fxn_index >= sizeof(fxn_to_ex) / sizeof(fxn_to_ex[0])) {
+            fxn_index = 0;
+        }
+    }
 }
 
 /******************************************************************************/
-static uint32_t _is_tick() {
-	static uint32_t tick = 0;
-	if (tick != HAL_GetTick()) {
+static uint32_t _is_tick()
+{
+    static uint32_t tick = 0;
 
-		tick = HAL_GetTick();
-		return 1;
-	}
-	return 0;
+    if (tick != HAL_GetTick()) {
+
+        tick = HAL_GetTick();
+        return 1;
+    }
+    return 0;
 }

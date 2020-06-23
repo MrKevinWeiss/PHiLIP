@@ -1,0 +1,312 @@
+ARM GAS  /tmp/ccdQtfeN.s 			page 1
+
+
+   1              		.cpu cortex-m3
+   2              		.eabi_attribute 20, 1
+   3              		.eabi_attribute 21, 1
+   4              		.eabi_attribute 23, 3
+   5              		.eabi_attribute 24, 1
+   6              		.eabi_attribute 25, 1
+   7              		.eabi_attribute 26, 1
+   8              		.eabi_attribute 30, 2
+   9              		.eabi_attribute 34, 1
+  10              		.eabi_attribute 18, 4
+  11              		.file	"rtc.c"
+  12              		.section	.text.init_rtc,"ax",%progbits
+  13              		.align	1
+  14              		.p2align 2,,3
+  15              		.global	init_rtc
+  16              		.syntax unified
+  17              		.thumb
+  18              		.thumb_func
+  19              		.fpu softvfp
+  21              	init_rtc:
+  22              		@ args = 0, pretend = 0, frame = 8
+  23              		@ frame_needed = 0, uses_anonymous_args = 0
+  24 0000 30B5     		push	{r4, r5, lr}
+  25 0002 0124     		movs	r4, #1
+  26 0004 83B0     		sub	sp, sp, #12
+  27 0006 0546     		mov	r5, r0
+  28 0008 FFF7FEFF 		bl	HAL_PWR_EnableBkUpAccess
+  29 000c 3E4B     		ldr	r3, .L20
+  30 000e 3F49     		ldr	r1, .L20+4
+  31 0010 1A46     		mov	r2, r3
+  32 0012 C869     		ldr	r0, [r1, #28]
+  33 0014 40F00060 		orr	r0, r0, #134217728
+  34 0018 C861     		str	r0, [r1, #28]
+  35 001a C969     		ldr	r1, [r1, #28]
+  36 001c 3C48     		ldr	r0, .L20+8
+  37 001e 01F00061 		and	r1, r1, #134217728
+  38 0022 0191     		str	r1, [sp, #4]
+  39 0024 0199     		ldr	r1, [sp, #4]
+  40 0026 0460     		str	r4, [r0]
+  41 0028 5968     		ldr	r1, [r3, #4]
+  42 002a 21F00801 		bic	r1, r1, #8
+  43 002e 5960     		str	r1, [r3, #4]
+  44              	.L2:
+  45 0030 5368     		ldr	r3, [r2, #4]
+  46 0032 1907     		lsls	r1, r3, #28
+  47 0034 FCD5     		bpl	.L2
+  48 0036 344C     		ldr	r4, .L20
+  49              	.L3:
+  50 0038 6368     		ldr	r3, [r4, #4]
+  51 003a 9B06     		lsls	r3, r3, #26
+  52 003c FCD5     		bpl	.L3
+  53 003e 6368     		ldr	r3, [r4, #4]
+  54 0040 344A     		ldr	r2, .L20+12
+  55 0042 43F01003 		orr	r3, r3, #16
+  56 0046 6360     		str	r3, [r4, #4]
+  57 0048 6368     		ldr	r3, [r4, #4]
+  58 004a 0120     		movs	r0, #1
+ARM GAS  /tmp/ccdQtfeN.s 			page 2
+
+
+  59 004c 23F00703 		bic	r3, r3, #7
+  60 0050 6360     		str	r3, [r4, #4]
+  61 0052 D36A     		ldr	r3, [r2, #44]
+  62 0054 23F46073 		bic	r3, r3, #896
+  63 0058 D362     		str	r3, [r2, #44]
+  64 005a FFF7FEFF 		bl	HAL_RCCEx_GetPeriphCLKFreq
+  65 005e A268     		ldr	r2, [r4, #8]
+  66 0060 0138     		subs	r0, r0, #1
+  67 0062 22F00F02 		bic	r2, r2, #15
+  68 0066 42EA1042 		orr	r2, r2, r0, lsr #16
+  69 006a A260     		str	r2, [r4, #8]
+  70 006c E368     		ldr	r3, [r4, #12]
+  71 006e 80B2     		uxth	r0, r0
+  72 0070 1B0C     		lsrs	r3, r3, #16
+  73 0072 1B04     		lsls	r3, r3, #16
+  74 0074 0343     		orrs	r3, r3, r0
+  75 0076 E360     		str	r3, [r4, #12]
+  76 0078 6368     		ldr	r3, [r4, #4]
+  77 007a 234A     		ldr	r2, .L20
+  78 007c 23F01003 		bic	r3, r3, #16
+  79 0080 6360     		str	r3, [r4, #4]
+  80              	.L4:
+  81 0082 5368     		ldr	r3, [r2, #4]
+  82 0084 9806     		lsls	r0, r3, #26
+  83 0086 FCD5     		bpl	.L4
+  84 0088 95F8B031 		ldrb	r3, [r5, #432]	@ zero_extendqisi2
+  85 008c 224A     		ldr	r2, .L20+16
+  86 008e 43F00103 		orr	r3, r3, #1
+  87 0092 05F5D871 		add	r1, r5, #432
+  88 0096 1160     		str	r1, [r2]
+  89 0098 D907     		lsls	r1, r3, #31
+  90 009a 85F8B031 		strb	r3, [r5, #432]
+  91 009e 31D4     		bmi	.L1
+  92 00a0 4FF46163 		mov	r3, #3600
+  93 00a4 95F8B821 		ldrb	r2, [r5, #440]	@ zero_extendqisi2
+  94 00a8 B5F8B911 		ldrh	r1, [r5, #441]	@ unaligned
+  95 00ac 03FB02F3 		mul	r3, r3, r2
+  96 00b0 1A48     		ldr	r0, .L20+20
+  97 00b2 95F8B621 		ldrb	r2, [r5, #438]	@ zero_extendqisi2
+  98 00b6 00FB0131 		mla	r1, r0, r1, r3
+  99 00ba 95F8B731 		ldrb	r3, [r5, #439]	@ zero_extendqisi2
+ 100 00be 1144     		add	r1, r1, r2
+ 101 00c0 C3EB0312 		rsb	r2, r3, r3, lsl #4
+ 102 00c4 104B     		ldr	r3, .L20
+ 103 00c6 01EB8201 		add	r1, r1, r2, lsl #2
+ 104              	.L6:
+ 105 00ca 5A68     		ldr	r2, [r3, #4]
+ 106 00cc 9206     		lsls	r2, r2, #26
+ 107 00ce FCD5     		bpl	.L6
+ 108 00d0 5A68     		ldr	r2, [r3, #4]
+ 109 00d2 080C     		lsrs	r0, r1, #16
+ 110 00d4 42F01002 		orr	r2, r2, #16
+ 111 00d8 89B2     		uxth	r1, r1
+ 112 00da 5A60     		str	r2, [r3, #4]
+ 113 00dc 9861     		str	r0, [r3, #24]
+ 114 00de D961     		str	r1, [r3, #28]
+ 115 00e0 5968     		ldr	r1, [r3, #4]
+ARM GAS  /tmp/ccdQtfeN.s 			page 3
+
+
+ 116 00e2 094A     		ldr	r2, .L20
+ 117 00e4 21F01001 		bic	r1, r1, #16
+ 118 00e8 5960     		str	r1, [r3, #4]
+ 119              	.L7:
+ 120 00ea 5368     		ldr	r3, [r2, #4]
+ 121 00ec 9B06     		lsls	r3, r3, #26
+ 122 00ee FCD5     		bpl	.L7
+ 123 00f0 5168     		ldr	r1, [r2, #4]
+ 124 00f2 95F8B031 		ldrb	r3, [r5, #432]	@ zero_extendqisi2
+ 125 00f6 21F00501 		bic	r1, r1, #5
+ 126 00fa 43F00103 		orr	r3, r3, #1
+ 127 00fe 5160     		str	r1, [r2, #4]
+ 128 0100 85F8B031 		strb	r3, [r5, #432]
+ 129              	.L1:
+ 130 0104 03B0     		add	sp, sp, #12
+ 131              		@ sp needed
+ 132 0106 30BD     		pop	{r4, r5, pc}
+ 133              	.L21:
+ 134              		.align	2
+ 135              	.L20:
+ 136 0108 00280040 		.word	1073752064
+ 137 010c 00100240 		.word	1073876992
+ 138 0110 3C044242 		.word	1111622716
+ 139 0114 006C0040 		.word	1073769472
+ 140 0118 00000000 		.word	.LANCHOR0
+ 141 011c 80510100 		.word	86400
+ 143              		.section	.text.commit_rtc,"ax",%progbits
+ 144              		.align	1
+ 145              		.p2align 2,,3
+ 146              		.global	commit_rtc
+ 147              		.syntax unified
+ 148              		.thumb
+ 149              		.thumb_func
+ 150              		.fpu softvfp
+ 152              	commit_rtc:
+ 153              		@ args = 0, pretend = 0, frame = 0
+ 154              		@ frame_needed = 0, uses_anonymous_args = 0
+ 155              		@ link register save eliminated.
+ 156 0000 1B4B     		ldr	r3, .L34
+ 157 0002 1868     		ldr	r0, [r3]
+ 158 0004 0378     		ldrb	r3, [r0]	@ zero_extendqisi2
+ 159 0006 D907     		lsls	r1, r3, #31
+ 160 0008 30D4     		bmi	.L31
+ 161 000a 4FF46163 		mov	r3, #3600
+ 162 000e 10B4     		push	{r4}
+ 163 0010 027A     		ldrb	r2, [r0, #8]	@ zero_extendqisi2
+ 164 0012 B0F80910 		ldrh	r1, [r0, #9]	@ unaligned
+ 165 0016 03FB02F3 		mul	r3, r3, r2
+ 166 001a 164C     		ldr	r4, .L34+4
+ 167 001c 8279     		ldrb	r2, [r0, #6]	@ zero_extendqisi2
+ 168 001e 04FB0131 		mla	r1, r4, r1, r3
+ 169 0022 C379     		ldrb	r3, [r0, #7]	@ zero_extendqisi2
+ 170 0024 1144     		add	r1, r1, r2
+ 171 0026 C3EB0312 		rsb	r2, r3, r3, lsl #4
+ 172 002a 134B     		ldr	r3, .L34+8
+ 173 002c 01EB8201 		add	r1, r1, r2, lsl #2
+ 174              	.L24:
+ARM GAS  /tmp/ccdQtfeN.s 			page 4
+
+
+ 175 0030 5A68     		ldr	r2, [r3, #4]
+ 176 0032 9206     		lsls	r2, r2, #26
+ 177 0034 FCD5     		bpl	.L24
+ 178 0036 5A68     		ldr	r2, [r3, #4]
+ 179 0038 0C0C     		lsrs	r4, r1, #16
+ 180 003a 42F01002 		orr	r2, r2, #16
+ 181 003e 89B2     		uxth	r1, r1
+ 182 0040 5A60     		str	r2, [r3, #4]
+ 183 0042 9C61     		str	r4, [r3, #24]
+ 184 0044 D961     		str	r1, [r3, #28]
+ 185 0046 5968     		ldr	r1, [r3, #4]
+ 186 0048 0B4A     		ldr	r2, .L34+8
+ 187 004a 21F01001 		bic	r1, r1, #16
+ 188 004e 5960     		str	r1, [r3, #4]
+ 189              	.L25:
+ 190 0050 5368     		ldr	r3, [r2, #4]
+ 191 0052 9B06     		lsls	r3, r3, #26
+ 192 0054 FCD5     		bpl	.L25
+ 193 0056 0378     		ldrb	r3, [r0]	@ zero_extendqisi2
+ 194 0058 5168     		ldr	r1, [r2, #4]
+ 195 005a 43F00103 		orr	r3, r3, #1
+ 196 005e 21F00501 		bic	r1, r1, #5
+ 197 0062 5160     		str	r1, [r2, #4]
+ 198 0064 10BC     		pop	{r4}
+ 199 0066 0370     		strb	r3, [r0]
+ 200 0068 0020     		movs	r0, #0
+ 201 006a 7047     		bx	lr
+ 202              	.L31:
+ 203 006c 0020     		movs	r0, #0
+ 204 006e 7047     		bx	lr
+ 205              	.L35:
+ 206              		.align	2
+ 207              	.L34:
+ 208 0070 00000000 		.word	.LANCHOR0
+ 209 0074 80510100 		.word	86400
+ 210 0078 00280040 		.word	1073752064
+ 212              		.section	.text.update_rtc,"ax",%progbits
+ 213              		.align	1
+ 214              		.p2align 2,,3
+ 215              		.global	update_rtc
+ 216              		.syntax unified
+ 217              		.thumb
+ 218              		.thumb_func
+ 219              		.fpu softvfp
+ 221              	update_rtc:
+ 222              		@ args = 0, pretend = 0, frame = 0
+ 223              		@ frame_needed = 0, uses_anonymous_args = 0
+ 224              		@ link register save eliminated.
+ 225 0000 1A4B     		ldr	r3, .L41
+ 226 0002 70B4     		push	{r4, r5, r6}
+ 227 0004 1D68     		ldr	r5, [r3]
+ 228 0006 2B78     		ldrb	r3, [r5]	@ zero_extendqisi2
+ 229 0008 9B07     		lsls	r3, r3, #30
+ 230 000a 2DD4     		bmi	.L36
+ 231 000c 184B     		ldr	r3, .L41+4
+ 232              	.L38:
+ 233 000e 9A69     		ldr	r2, [r3, #24]
+ARM GAS  /tmp/ccdQtfeN.s 			page 5
+
+
+ 234 0010 DC69     		ldr	r4, [r3, #28]
+ 235 0012 9869     		ldr	r0, [r3, #24]
+ 236 0014 91B2     		uxth	r1, r2
+ 237 0016 8842     		cmp	r0, r1
+ 238 0018 F9D1     		bne	.L38
+ 239 001a A4B2     		uxth	r4, r4
+ 240 001c 154B     		ldr	r3, .L41+8
+ 241 001e 44EA0242 		orr	r2, r4, r2, lsl #16
+ 242 0022 1548     		ldr	r0, .L41+12
+ 243 0024 A3FB0214 		umull	r1, r4, r3, r2
+ 244 0028 A0FB0210 		umull	r1, r0, r0, r2
+ 245 002c 6409     		lsrs	r4, r4, #5
+ 246 002e 1349     		ldr	r1, .L41+16
+ 247 0030 A3FB0463 		umull	r6, r3, r3, r4
+ 248 0034 C00A     		lsrs	r0, r0, #11
+ 249 0036 A1FB0061 		umull	r6, r1, r1, r0
+ 250 003a 114E     		ldr	r6, .L41+20
+ 251 003c 5B09     		lsrs	r3, r3, #5
+ 252 003e A6FB02C6 		umull	ip, r6, r6, r2
+ 253 0042 0909     		lsrs	r1, r1, #4
+ 254 0044 C3EB0313 		rsb	r3, r3, r3, lsl #4
+ 255 0048 A4EB8303 		sub	r3, r4, r3, lsl #2
+ 256 004c 01EB4101 		add	r1, r1, r1, lsl #1
+ 257 0050 C4EB0414 		rsb	r4, r4, r4, lsl #4
+ 258 0054 A2EB8402 		sub	r2, r2, r4, lsl #2
+ 259 0058 A0EBC101 		sub	r1, r0, r1, lsl #3
+ 260 005c C6F30F44 		ubfx	r4, r6, #16, #16
+ 261 0060 AB70     		strb	r3, [r5, #2]
+ 262 0062 6A70     		strb	r2, [r5, #1]
+ 263 0064 AC80     		strh	r4, [r5, #4]	@ unaligned
+ 264 0066 E970     		strb	r1, [r5, #3]
+ 265              	.L36:
+ 266 0068 70BC     		pop	{r4, r5, r6}
+ 267 006a 7047     		bx	lr
+ 268              	.L42:
+ 269              		.align	2
+ 270              	.L41:
+ 271 006c 00000000 		.word	.LANCHOR0
+ 272 0070 00280040 		.word	1073752064
+ 273 0074 89888888 		.word	-2004318071
+ 274 0078 C5B3A291 		.word	-1851608123
+ 275 007c ABAAAAAA 		.word	-1431655765
+ 276 0080 07452EC2 		.word	-1037155065
+ 278              		.section	.bss.rtc,"aw",%nobits
+ 279              		.align	2
+ 280              		.set	.LANCHOR0,. + 0
+ 283              	rtc:
+ 284 0000 00000000 		.space	4
+ 285              		.ident	"GCC: (GNU Tools for Arm Embedded Processors 7-2017-q4-major) 7.2.1 20170904 (release) [ARM
+ARM GAS  /tmp/ccdQtfeN.s 			page 6
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 rtc.c
+     /tmp/ccdQtfeN.s:13     .text.init_rtc:0000000000000000 $t
+     /tmp/ccdQtfeN.s:21     .text.init_rtc:0000000000000000 init_rtc
+     /tmp/ccdQtfeN.s:136    .text.init_rtc:0000000000000108 $d
+     /tmp/ccdQtfeN.s:144    .text.commit_rtc:0000000000000000 $t
+     /tmp/ccdQtfeN.s:152    .text.commit_rtc:0000000000000000 commit_rtc
+     /tmp/ccdQtfeN.s:208    .text.commit_rtc:0000000000000070 $d
+     /tmp/ccdQtfeN.s:213    .text.update_rtc:0000000000000000 $t
+     /tmp/ccdQtfeN.s:221    .text.update_rtc:0000000000000000 update_rtc
+     /tmp/ccdQtfeN.s:271    .text.update_rtc:000000000000006c $d
+     /tmp/ccdQtfeN.s:279    .bss.rtc:0000000000000000 $d
+     /tmp/ccdQtfeN.s:283    .bss.rtc:0000000000000000 rtc
+
+UNDEFINED SYMBOLS
+HAL_PWR_EnableBkUpAccess
+HAL_RCCEx_GetPeriphCLKFreq
