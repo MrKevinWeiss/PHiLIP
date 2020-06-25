@@ -1,0 +1,40 @@
+{
+    "configurations": [
+        {
+            "name": "STM32 Debug",
+            "includePath": [
+                "/home/kevinweiss/opt/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/c++/7.2.1",
+                "/home/kevinweiss/opt/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/c++/7.2.1/arm-none-eabi",
+                "/home/kevinweiss/opt/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/c++/7.2.1/backward",
+                "/home/kevinweiss/opt/gcc-arm-none-eabi-7-2017-q4-major/lib/gcc/arm-none-eabi/7.2.1/include",
+                "/home/kevinweiss/opt/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include",
+                "${workspaceRoot}/FW/Drivers/CMSIS/Include/",
+                "${workspaceRoot}/FW/Drivers/CMSIS/Include/",
+                "${workspaceRoot}/FW/Drivers/CMSIS/Device/ST/STM32F1xx/Include/",
+                "${workspaceRoot}/FW/Inc",
+                "${workspaceRoot}/FW/MMM",
+                "${workspaceRoot}/FW/Src",
+                "${workspaceRoot}/FW/Drivers/STM32F1xx_HAL_Driver/Inc",
+                "${workspaceRoot}/FW/Drivers/STM32F1xx_HAL_Driver/Inc/Legacy/",
+                "${workspaceRoot}/FW/Drivers/STM32F1xx_HAL_Driver/Src"
+            ],
+            "defines": [
+                "DEBUG",
+                "DUSE_HAL_DRIVER",
+                "DSTM32F103xB",
+                "NUCLEOF103RB"
+            ],
+            "intelliSenseMode": "clang-x64",
+            "browse": {
+            "path": [
+                "${workspaceRoot}/FW",
+                "/home/kevinweiss/opt/gcc-arm-none-eabi-7-2017-q4-major/"
+            ],
+            "limitSymbolsToIncludedHeaders": false,
+            "databaseFilename": ""
+            }
+        }
+
+    ],
+    "version": 4
+}

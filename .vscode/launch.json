@@ -1,0 +1,23 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "NUCLEOF103RB",
+            "cwd": "${workspaceRoot}/FW",
+            "executable": "NUCLEOF103RB/PHiLIP.elf",
+            "request": "launch",
+            "type": "cortex-debug",
+            "device": "STM32F103RB",
+            "v1": false,
+            "servertype": "openocd",
+            "svdFile": "${workspaceRoot}/FW/STM32F103xx.svd",
+            "configFiles": [
+                "NUCLEO-F103RB_Debug.cfg"
+              ],
+            "runToMain": true
+        }
+    ]
+}
